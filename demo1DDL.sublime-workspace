@@ -1,0 +1,340 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"beg",
+				"beginend\t$1.begin(), $1.end()"
+			],
+			[
+				"n",
+				"nbressais"
+			],
+			[
+				"tau",
+				"taucible"
+			],
+			[
+				"l",
+				"length"
+			],
+			[
+				"dev",
+				"dev_num"
+			],
+			[
+				"chang",
+				"changements"
+			],
+			[
+				"inc",
+				"incfichier"
+			],
+			[
+				"ni",
+				"nomfichier"
+			],
+			[
+				"size",
+				"sizeof"
+			],
+			[
+				"nom",
+				"nomfichier"
+			],
+			[
+				"da",
+				"damping"
+			],
+			[
+				"int",
+				"integration"
+			],
+			[
+				"move",
+				"movemasse"
+			],
+			[
+				"pos",
+				"pos1-pos2"
+			],
+			[
+				"for",
+				"forcer"
+			],
+			[
+				"force",
+				"forcenow"
+			],
+			[
+				"pyl",
+				"pylibftdi"
+			],
+			[
+				"pr",
+				"proto"
+			],
+			[
+				"fi",
+				"fifoverif"
+			],
+			[
+				"lect",
+				"lecturing"
+			],
+			[
+				"le",
+				"lecture"
+			],
+			[
+				"fif",
+				"fifoout"
+			],
+			[
+				"fifo",
+				"fifoout"
+			],
+			[
+				"F",
+				"FIFOenvoi"
+			],
+			[
+				"_",
+				"__init__"
+			],
+			[
+				"Dev",
+				"DeviceProcess"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 104.0,
+		"last_filter": "install",
+		"selected_items":
+		[
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"linter",
+				"Plugin Development: Profile Events"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 400.0
+	},
+	"console":
+	{
+		"height": 126.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = '2915d1851351e5ee549c20394736b442' + '8bc59f460fa1548d1514676163dafc88'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)",
+			"install"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/D/owncloudisir/workspace/Demo1DDL/main.py",
+		"/D/owncloudisir/workspace/HumanAdapt/mainarduinoread.c",
+		"/D/owncloudisir/workspace/HumanAdapt/include/ftdi.h",
+		"/d/mingw/include/stdlib.h",
+		"/D/owncloudisir/workspace/HumanAdapt/main.c",
+		"/D/owncloudisir/workspace/HumanAdapt/arduino-serial-lib.c",
+		"/D/owncloudisir/workspace/HumanAdapt/include/arduino-serial-lib.h",
+		"/D/owncloudisir/workspace/HumanAdapt/include/arduino-serial-lib.c",
+		"/D/owncloudisir/workspace/multicom/README.md",
+		"/D/owncloudisir/workspace/multicom/test_com.py",
+		"/D/owncloudisir/workspace/PlannarPosition/main.py",
+		"/D/owncloudisir/workspace/Haptic-Simulation/README.md",
+		"/D/owncloudisir/workspace/Haptic-Simulation/test_haptic.py",
+		"/D/owncloudisir/workspace/PlannarPosition/linuxwacom.py",
+		"/D/owncloudisir/workspace/PlannarPosition/listenudp.py",
+		"/D/owncloudisir/workspace/Haptic-Simulation/haptic.py",
+		"/D/owncloudisir/workspace/multicom/com.py",
+		"/D/owncloudisir/workspace/Haptic-Simulation/com.py",
+		"/D/owncloudisir/workspace/Haptic-Simulation/test_com.py",
+		"/D/owncloudisir/workspace/Haptic-Simulation/multicom/com.py",
+		"/D/owncloudisir/workspace/Haptic-Simulation/.codeclimate.yml",
+		"/D/owncloudisir/workspace/Haptic-Simulation/send.bat",
+		"/D/owncloudisir/workspace/Haptic-Simulation/.coverage",
+		"/D/owncloudisir/workspace/Haptic-Simulation/.coveragerc",
+		"/D/owncloudisir/workspace/Haptic-Simulation/launch.bat",
+		"/D/owncloudisir/workspace/Haptic-Simulation/.travis.yml",
+		"/C/Users/antoine/AppData/Roaming/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/antoine/AppData/Roaming/Sublime Text 3/Packages/User/Preferences.sublime-settings",
+		"/C/Users/antoine/AppData/Roaming/Sublime Text 3/Packages/User/Package Control.sublime-settings"
+	],
+	"find":
+	{
+		"height": 23.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"SEND_ADDR"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 23.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "Packages/Makefile/Make.sublime-build",
+	"project": "demo1DDL.sublime-project",
+	"replace":
+	{
+		"height": 42.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"la",
+				"launch.bat"
+			],
+			[
+				"te",
+				"test_haptic.py"
+			],
+			[
+				".tr",
+				".travis.yml"
+			],
+			[
+				"re",
+				"README.md"
+			],
+			[
+				"c",
+				"com.py"
+			],
+			[
+				"co",
+				"com.py"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": false,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 236.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}
