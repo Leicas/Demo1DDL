@@ -1,7 +1,13 @@
-from glumpy import app, gloo, gl
+"""Affichage de simulation d'aiguille dans différents matériaux
+Ce module permet d'afficher le déplacement 1D d'une aiguille
+"""
 import math
+from glumpy import app, gloo, gl
 
-vertex = """
+MUR = [-0.5, 0, 0.5]
+OLDMUR = {MUR[0]: 0, MUR[1]: 0, MUR[2]: 0}
+
+VERTEX = """
   uniform float scale;
   attribute vec2 position;
   attribute vec4 color;
@@ -12,7 +18,7 @@ vertex = """
     v_color = color;
   } """
 
-vertexm = """
+VERTEXM = """
   uniform float depla;
   uniform float scale;
   attribute vec2 position;
@@ -24,7 +30,7 @@ vertexm = """
     v_color = color;
   } """
 
-fragment = """
+FRAGMENTS = """
   varying vec4 v_color;
   void main()
   {
@@ -32,65 +38,87 @@ fragment = """
   } """
 
 # Build the program and corresponding buffers (with 4 vertices)
-quad = gloo.Program(vertex, fragment, count=4)
+FOND = gloo.Program(VERTEX, FRAGMENTS, count=4)
+
 
 
 # Upload data into GPU
-quad['color'] = [ (1,1,1,1), (1,1,1,1), (1,1,1,1), (1,1,1,1) ]
-quad['position'] = [ (-1,-1),   (-1,+1),   (+1,-1),   (+1,+1)   ]
-quad['scale'] = 1.0
+FOND['color'] = [(1, 1, 1, 1)] * 4
+FOND['position'] = [(-1, -1), (-1, +1), (+1, -1), (+1, +1)]
+FOND['scale'] = 1.0
 
-seri = gloo.Program(vertexm, fragment, count=4)
-seri['color'] = [ (0.5,0.5,0.5,1), (1,1,1,1), (0,0,0,1), (1,1,1,1) ]
-seri['position'] = [ (-4,-0.05),   (-4,+0),   (-0.6,-0.05),   (-0.5,+0)   ]
-seri['scale'] = 1.0
-seri["depla"] = 0.0
+AIGUILLE = gloo.Program(VERTEXM, FRAGMENTS, count=4)
+AIGUILLE['color'] = [(0.5, 0.5, 0.5, 1), (1, 1, 1, 1), (0, 0, 0, 1), (1, 1, 1, 1)]
+AIGUILLE['position'] = [(-4, -0.05), (-4, +0), (-0.6, -0.05), (-0.5, +0)]
+AIGUILLE['scale'] = 1.0
+AIGUILLE["depla"] = 0.0
 
-quadb = gloo.Program(vertex, fragment, count=8)
-quadb['color'] = [ (1,0,0,1), (1,0,0,1), (1,0,0,1), (1,0,0,1), (1,0,0,1) , (1,0,0,1), (1,0,0,1), (1,0,0,1)]
-quadb['position'] = [   (-0.5,-0.25),(-0.5,-1),   (-0.3,-0), (+1,-1),  (+1,+1), (-0.3,-0),  (-0.5,1) ,   (-0.5,+0.25)  ]
-quadb['scale'] = 1
+def sticky(pos_mur, pos_aig):
+    """
+    Compare la position du mur et de l'aiguille et retourne la déformation
+    """
+    dif = pos_aig-pos_mur
+    posi = 0
+    if OLDMUR[pos_mur] == 1:
+        if dif < -0.1:
+            posi = 0
+            OLDMUR[pos_mur] = 0
+        elif dif-0.1 < 0:
+            posi = dif-0.1
+    else:
+        if dif > 0.1:
+            posi = 0
+            OLDMUR[pos_mur] = 1
+        elif dif > 0:
+            posi = dif
+    return posi
 
-mur2 = gloo.Program(vertex, fragment, count=8)
-mur2['color'] = [ (1,1,0,1), (1,1,0,1), (1,1,0,1), (1,1,0,1), (1,1,0,1) , (1,1,0,1), (1,1,0,1), (1,1,0,1)]
-mur2['position'] = [   (0,-0.25),(0,-1),   (0.3,-0), (+1,-1),  (+1,+1), (0.3,-0),  (0,1) ,   (0,+0.25)  ]
-mur2['scale'] = 1
+def posmur(pos_mur, pos_aig=0):
+    """
+    retourne la liste correspondant aux coordonnées des triangles du mur
+    """
+    return [(pos_mur, -0.25), (pos_mur, -1), (pos_mur+sticky(pos_mur, pos_aig), -0), (+1, -1),\
+     (+1, +1), (pos_mur+sticky(pos_mur, pos_aig), -0), (pos_mur, 1), (pos_mur, +0.25)]
 
-mur3 = gloo.Program(vertex, fragment, count=8)
-mur3['color'] = [ (0,0,1,1), (0,0,1,1), (0,0,1,1), (0,0,1,1), (0,0,1,1) , (0,0,1,1), (0,0,1,1), (0,0,1,1)]
-mur3['position'] = [   (0.5,-0.25),(0.5,-1),   (0.7,-0), (+1,-1),  (+1,+1), (0.7,-0),  (0.5,1) ,   (0.5,+0.25)  ]
-mur3['scale'] = 1
+MUR1 = gloo.Program(VERTEX, FRAGMENTS, count=8)
+MUR1['color'] = [(1, 0, 0, 1)] * 8
+MUR1['position'] = posmur(MUR[0])
+MUR1['scale'] = 1
+
+MUR2 = gloo.Program(VERTEX, FRAGMENTS, count=8)
+MUR2['color'] = [(1, 1, 0, 1)] * 8
+MUR2['position'] = posmur(MUR[1])
+MUR2['scale'] = 1
+
+MUR3 = gloo.Program(VERTEX, FRAGMENTS, count=8)
+MUR3['color'] = [(0, 0, 1, 1)] * 8
+MUR3['position'] = posmur(MUR[2])
+MUR3['scale'] = 1
 
 # Create a window with a valid GL context
-window = app.Window(800,600)
-# Tell glumpy what needs to be done at each redraw
-@window.event
-def on_draw(dt):
-    window.clear()
-    quad.draw(gl.GL_TRIANGLE_STRIP)
-    seri["depla"]+=dt
-    depla=math.sin(seri["depla"])
-    if depla>=-0.5 and depla <= -0.3:
-        deplam1=depla+0.5
-    else:
-        deplam1=0.0
-    quadb['position'] = [   (-0.5,-0.3),(-0.5,-1),(-0.5+deplam1,-0), (+1,-1),  (+1,+1), (-0.5+deplam1,-0),  (-0.5,1) ,   (-0.5,0.3)  ]
-    quadb.draw(gl.GL_TRIANGLE_STRIP)
-    if depla>=0 and depla <= 0.2:
-        deplam2=depla
-    else:
-        deplam2=0.0
-    mur2['position'] = [   (0,-0.25),(0,-1),   (0+deplam2,-0), (+1,-1),  (+1,+1), (0+deplam2,-0),  (0,1) ,   (0,+0.25)  ]
-    mur2.draw(gl.GL_TRIANGLE_STRIP)
-    if depla>=0.5 and depla <= 0.7:
-        deplam3=depla-0.5
-    else:
-        deplam3=0.0
-    mur3['position'] = [   (0.5,-0.25),(0.5,-1),   (0.5+deplam3,-0), (+1,-1),  (+1,+1), (0.5+deplam3,-0),  (0.5,1) ,   (0.5,+0.25)  ]
-    mur3.draw(gl.GL_TRIANGLE_STRIP)
+WINDOW = app.Window(800, 600)
+#Calcul des parois molles
 
-    seri['position'] = [ (-4,-0.05),   (-4,+0),   (-0.6+depla+0.5,-0.05),   (-0.5+depla+0.5,+0)   ]
-    seri.draw(gl.GL_TRIANGLE_STRIP)
+# Tell glumpy what needs to be done at each redraw
+@WINDOW.event
+
+def on_draw(dtemps):
+    """
+    Ce qui se passe à chaque raffraichissement
+    """
+    WINDOW.clear()
+    FOND.draw(gl.GL_TRIANGLE_STRIP)
+    AIGUILLE["depla"] += dtemps
+    depla = math.sin(AIGUILLE["depla"])
+    MUR1['position'] = posmur(MUR[0], depla)
+    MUR1.draw(gl.GL_TRIANGLE_STRIP)
+    MUR2['position'] = posmur(MUR[1], depla)
+    MUR2.draw(gl.GL_TRIANGLE_STRIP)
+    MUR3['position'] = posmur(MUR[2], depla)
+    MUR3.draw(gl.GL_TRIANGLE_STRIP)
+
+    AIGUILLE['position'] = [(-4, -0.05), (-4, +0), (-0.6+depla+0.5, -0.05), (-0.5+depla+0.5, +0)]
+    AIGUILLE.draw(gl.GL_TRIANGLE_STRIP)
 
 # Run the app
 app.run()
