@@ -1,0 +1,2 @@
+# Demo1DDL
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce37f5657c3f485e917ec47dbc686ae8)](https://www.codacy.com/app/leicas/Demo1DDL?utm_source=github.com&utm_medium=referral&utm_content=Leicas/Demo1DDL&utm_campaign=badger)
