@@ -2,10 +2,16 @@
 Ce module permet d'afficher le déplacement 1D d'une aiguille
 """
 import math
-from glumpy import app, gloo, gl
+import imageio
+import numpy as np
+from glumpy import app, gloo, gl, glm
+
+#####################################################################################################
 
 MUR = [-0.5, 0, 0.5]
 OLDMUR = {MUR[0]: 0, MUR[1]: 0, MUR[2]: 0}
+
+#####################################################################################################
 
 VERTEX = """
   uniform float scale;
@@ -30,29 +36,56 @@ VERTEXM = """
     v_color = color;
   } """
 
-FRAGMENTS = """
-  varying vec4 v_color;
+FRAGMENT = """
+  varying vec4 v_color;    // Interpolated fragment color (in)
   void main()
   {
       gl_FragColor = v_color;
   } """
 
+# Pour les Textures 2D #
+##################################################################################
+vertexX = """
+	uniform float scale;
+    attribute vec2 position;
+    attribute vec2 texcoord;
+    varying vec2 v_texcoord;
+    void main()
+    {
+        gl_Position = vec4(scale*position, 0.0, 1.0);
+        v_texcoord = texcoord;
+    }
+"""
+
+fragmentX = """
+    uniform sampler2D texture;
+    varying vec2 v_texcoord;
+    void main()
+    {
+        gl_FragColor = texture2D(texture, v_texcoord);
+    }
+"""
+##################################################################################
+
+
+#####################################################################################################
+
 # Build the program and corresponding buffers (with 4 vertices)
-FOND = gloo.Program(VERTEX, FRAGMENTS, count=4)
-
-
+FOND = gloo.Program(VERTEX, FRAGMENT, count=4)
 
 # Upload data into GPU
 FOND['color'] = [(1, 1, 1, 1)] * 4
 FOND['position'] = [(-1, -1), (-1, +1), (+1, -1), (+1, +1)]
 FOND['scale'] = 1.0
 
-AIGUILLE = gloo.Program(VERTEXM, FRAGMENTS, count=4)
+AIGUILLE = gloo.Program(VERTEXM, FRAGMENT, count=4)
 AIGUILLE['color'] = [(0.5, 0.5, 0.5, 1), (1, 1, 1, 1), (0, 0, 0, 1), (1, 1, 1, 1)]
 AIGUILLE['position'] = [(-4, -0.05), (-4, +0), (-0.6, -0.05), (-0.5, +0)]
 AIGUILLE['scale'] = 1.0
 AIGUILLE["depla"] = 0.0
 
+
+##################################################################################
 def sticky(pos_mur, pos_aig):
     """
     Compare la position du mur et de l'aiguille et retourne la déformation
@@ -77,24 +110,37 @@ def posmur(pos_mur, pos_aig=0):
     """
     retourne la liste correspondant aux coordonnées des triangles du mur
     """
-    return [(pos_mur, -0.25), (pos_mur, -1), (pos_mur+sticky(pos_mur, pos_aig), -0), (+1, -1),\
-     (+1, +1), (pos_mur+sticky(pos_mur, pos_aig), -0), (pos_mur, 1), (pos_mur, +0.25)]
+    return [(pos_mur, -0.25), (pos_mur, -1), (pos_mur+sticky(pos_mur, pos_aig), -0),\
+    (+1, -1),(+1, +1), (pos_mur+sticky(pos_mur, pos_aig), -0), (pos_mur, 1), (pos_mur, +0.25)]
 
-MUR1 = gloo.Program(VERTEX, FRAGMENTS, count=8)
-MUR1['color'] = [(1, 0, 0, 1)] * 8
+##################################################################################
+
+MUR1 = gloo.Program(vertexX, fragmentX, count=8)
 MUR1['position'] = posmur(MUR[0])
+MUR1['texcoord'] = posmur(MUR[0])
+MUR1['texture'] = imageio.imread("miel1.png")
 MUR1['scale'] = 1
+"""MUR1['texture'] = imageio.imread("miel1.png")
+MUR1['u_model'] = np.eye(4, dtype=np.float32)
+MUR1['u_view'] = glm.translation(0, 0, 0)
+MUR1['position'] = posmur(MUR[0])
+MUR1['scale'] = 1"""
 
-MUR2 = gloo.Program(VERTEX, FRAGMENTS, count=8)
-MUR2['color'] = [(1, 1, 0, 1)] * 8
+MUR2 = gloo.Program(vertexX, fragmentX, count=8)
 MUR2['position'] = posmur(MUR[1])
+MUR2['texcoord'] = posmur(MUR[1])
+MUR2['texture'] = imageio.imread("eau.png")
 MUR2['scale'] = 1
 
-MUR3 = gloo.Program(VERTEX, FRAGMENTS, count=8)
-MUR3['color'] = [(0, 0, 1, 1)] * 8
+MUR3 = gloo.Program(vertexX, fragmentX, count=8)
 MUR3['position'] = posmur(MUR[2])
+MUR3['texcoord'] = posmur(MUR[2])
+MUR3['texture'] = imageio.imread("sable.png")
 MUR3['scale'] = 1
 
+
+
+#####################################################################################################
 # Create a window with a valid GL context
 WINDOW = app.Window(800, 600)
 #Calcul des parois molles
@@ -116,7 +162,6 @@ def on_draw(dtemps):
     MUR2.draw(gl.GL_TRIANGLE_STRIP)
     MUR3['position'] = posmur(MUR[2], depla)
     MUR3.draw(gl.GL_TRIANGLE_STRIP)
-
     AIGUILLE['position'] = [(-4, -0.05), (-4, +0), (-0.6+depla+0.5, -0.05), (-0.5+depla+0.5, +0)]
     AIGUILLE.draw(gl.GL_TRIANGLE_STRIP)
 
