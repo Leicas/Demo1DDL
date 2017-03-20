@@ -109,6 +109,7 @@ fragmentX = """
         gl_FragColor = texture2D(texture, v_texcoord);
     }
 """
+##################################################################################
 
 def affichage(name, shareddic):
     import OpenGL
