@@ -161,7 +161,7 @@ def affichage(name, shareddic):
 
     MUR1 = gloo.Program(vertexX, fragmentX, count=8)
     MUR1['position'] = posmur(MUR[0])
-    MUR1['texcoord'] = posmur(MUR[0])
+    MUR1['texcoord'] = [(0.25,0.375),(0,0),(0.25,0.5),(1,0),(1,1),(0.25,0.5),(0,1),(0.25,0.625)]
     MUR1['texture'] = imageio.imread("miel1.png")
     MUR1['scale'] = 1
     """MUR1['texture'] = imageio.imread("miel1.png")
@@ -172,13 +172,13 @@ def affichage(name, shareddic):
 
     MUR2 = gloo.Program(vertexX, fragmentX, count=8)
     MUR2['position'] = posmur(MUR[1])
-    MUR2['texcoord'] = posmur(MUR[1])
-    MUR2['texture'] = imageio.imread("eau.png")
+    MUR2['texcoord'] = [(0.5,0.375),(0,0),(0.5,0.5),(1,0),(1,1),(0.5,0.5),(0,1),(0.5,0.625)]
+    MUR2['texture'] = imageio.imread("bio4.png")
     MUR2['scale'] = 1
 
     MUR3 = gloo.Program(vertexX, fragmentX, count=8)
     MUR3['position'] = posmur(MUR[2])
-    MUR3['texcoord'] = posmur(MUR[2])
+    MUR3['texcoord'] = [(0.75,0.375),(0,0),(0.75,0.5),(1,0),(1,1),(0.75,0.5),(0,1),(0.75,0.625)]
     MUR3['texture'] = imageio.imread("sable.png")
     MUR3['scale'] = 1
 
