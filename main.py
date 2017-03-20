@@ -19,18 +19,26 @@ VERTEXM = """
   attribute vec2 position;
   attribute vec4 color;
   varying vec4 v_color;
+  //uniform vec2 v_pos;
+  
   void main()
   {
     gl_Position = vec4(scale*position, 0.0, 1.0);
     v_color = color;
+
   } """
 
 FRAGMENT = """
   varying vec4 v_color;    // Interpolated fragment color (in)
+  //vec2 v_pos;
+  
   void main()
   {
+      //v_pos = gl_FragCoord.xy;
       gl_FragColor = v_color;
-  } """
+  } 
+
+  """
 
 ##################################################################################
 # Pour les Textures 2D #
@@ -50,8 +58,6 @@ fragmentX = """
     uniform sampler2D texture;
     varying vec2 v_texcoord;
 
-   // uniform float time;
-   // uniform vec2 resolution;
 
     void main( void )
     {
@@ -67,10 +73,7 @@ fragmentX = """
     }
 
 
-    //void main()
-    //{
-    //    gl_FragColor = texture2D(texture, v_texcoord);
-    //}
+
 """
 
 #####################################################################################################
@@ -98,11 +101,11 @@ def sticky(pos_mur, pos_aig):
     dif = pos_aig-pos_mur
     posi = 0
     if OLDMUR[pos_mur] == 1:
-        if dif < -0.1:
-            posi = 0
-            OLDMUR[pos_mur] = 0
-        elif dif-0.1 < 0:
-            posi = dif-0.1
+    	if dif < -0.1 :
+    		posi = 0
+    		OLDMUR[pos_mur] = 0
+    	elif dif-0.1 < 0:
+    		posi = dif-0.1
     else:
         if dif > 0.1:
             posi = 0
@@ -118,35 +121,15 @@ def posmur(pos_mur, pos_aig=0):
     return [(pos_mur, -0.25), (pos_mur, -1), (pos_mur+sticky(pos_mur, pos_aig), -0),\
     (+1, -1),(+1, +1), (pos_mur+sticky(pos_mur, pos_aig), -0), (pos_mur, 1), (pos_mur, +0.25)]
 
-
-##################################################################################    
-def sticky2(pos_mur,ord_text, pos_aig):
+def inWall(pos_mur):
     """
     Compare la position du mur et de l'aiguille et retourne la déformation
     """
-    dif = pos_aig-ord_text
-    posi = 0
     if OLDMUR[pos_mur] == 1:
-        if dif < -0.1:
-            posi = 0
-            OLDMUR[pos_mur] = 0
-        elif dif-0.1 < 0:
-            posi = dif-0.1
-    else:
-        if dif > 0.1:
-            posi = 0
-            OLDMUR[pos_mur] = 1
-        elif dif > 0:
-            posi = dif
-    return posi
-
-def posmur2(pos_mur, ord_text, pos_aig=0):
-    """
-    retourne la liste correspondant aux coordonnées des triangles du mur
-    """
-    return [(ord_text, 0.375), (ord_text, 0), (ord_text+sticky2(pos_mur,ord_text, pos_aig), -0.5),\
-    (+1, 0),(+1, +1), (ord_text+sticky2(pos_mur,ord_text, pos_aig), 0.5), (ord_text, 1), (ord_text, 0.625)]
-
+    	vect_color = [(0.5, 0.5, 0.5, 0.75), (1, 1, 1, 0.75), (0, 0, 0, 0.75), (1, 1, 1, 0.75)]
+    else :
+    	vect_color = [(0.5, 0.5, 0.5, 1), (1, 1, 1, 1), (0, 0, 0, 1), (1, 1, 1, 1)] 
+    return vect_color 
 
 ##################################################################################    
 
@@ -193,18 +176,21 @@ def on_draw(dtemps):
     depla = math.sin(AIGUILLE["depla"])
     MUR1['position'] = posmur(MUR[0], depla)
     MUR1['texcoord'] = [(0.25,0.375),(0,0),(0.25,0.5),(1,0),(1,1),(0.25,0.5),(0,1),(0.25,0.625)]
-    #print(posmur(MUR[0], depla))
     MUR1.draw(gl.GL_TRIANGLE_STRIP)
     MUR2['position'] = posmur(MUR[1], depla)
-    MUR1['texcoord'] = [(0.5,0.375),(0,0),(0.5,0.5),(1,0),(1,1),(0.5,0.5),(0,1),(0.5,0.625)]
-    #print(posmur(MUR[1], depla))
+    MUR2['texcoord'] = [(0.5,0.375),(0,0),(0.5,0.5),(1,0),(1,1),(0.5,0.5),(0,1),(0.5,0.625)]
     MUR2.draw(gl.GL_TRIANGLE_STRIP)
     MUR3['position'] = posmur(MUR[2], depla)
-    MUR1['texcoord'] = [(0.75,0.375),(0,0),(0.75,0.5),(1,0),(1,1),(0.75,0.5),(0,1),(0.75,0.625)]
-    #print(posmur(MUR[2], depla))
+    MUR3['texcoord'] = [(0.75,0.375),(0,0),(0.75,0.5),(1,0),(1,1),(0.75,0.5),(0,1),(0.75,0.625)]
     MUR3.draw(gl.GL_TRIANGLE_STRIP)
     AIGUILLE['position'] = [(-4, -0.05), (-4, +0), (-0.6+depla+0.5, -0.05), (-0.5+depla+0.5, +0)]
+    AIGUILLE['color'] = inWall(MUR[0])
+
     AIGUILLE.draw(gl.GL_TRIANGLE_STRIP)
+    #print(AIGUILLE['v_pos'])
+
+
+
 
 # Run the app
 app.run()
