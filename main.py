@@ -6,12 +6,47 @@ import imageio
 import numpy as np
 import psutil, os
 import sys
+# Module multiprocessing is organized differently in Python 3.4+
+try:
+    # Python 3.4+
+    if sys.platform.startswith('win'):
+        import multiprocessing.popen_spawn_win32 as forking
+    else:
+        import multiprocessing.popen_fork as forking
+except ImportError:
+    import multiprocessing.forking as forking
+
+if sys.platform.startswith('win'):
+    # First define a modified version of Popen.
+    class _Popen(forking.Popen):
+        def __init__(self, *args, **kw):
+            if hasattr(sys, 'frozen'):
+                # We have to set original _MEIPASS2 value from sys._MEIPASS
+                # to get --onefile mode working.
+                os.putenv('_MEIPASS2', sys._MEIPASS)
+            try:
+                super(_Popen, self).__init__(*args, **kw)
+            finally:
+                if hasattr(sys, 'frozen'):
+                    # On some platforms (e.g. AIX) 'os.unsetenv()' is not
+                    # available. In those cases we cannot delete the variable
+                    # but only set it to the empty string. The bootloader
+                    # can handle this case.
+                    if hasattr(os, 'unsetenv'):
+                        os.unsetenv('_MEIPASS2')
+                    else:
+                        os.putenv('_MEIPASS2', '')
+
+    # Second override 'Popen' class with our modified version.
+    forking.Popen = _Popen
+
+
+# Example for testing multiprocessing.
 import multiprocessing
-from threading import Thread
 import os
 import time
-import multicom.com as com
-from glumpy import app, gloo, gl, glm
+
+
 
 
 COUNT = 100
@@ -74,14 +109,10 @@ fragmentX = """
         gl_FragColor = texture2D(texture, v_texcoord);
     }
 """
-##################################################################################
 
-###### Haptic device init
-
-HAPTICDEV = com.HDevice("ftdi")
-
-##################################################################################
 def affichage(name, shareddic):
+    import OpenGL
+    from glumpy import app, gloo, gl, glm
     # Build the program and corresponding buffers (with 4 vertices)
     FOND = gloo.Program(VERTEX, FRAGMENT, count=4)
 
@@ -180,7 +211,15 @@ def affichage(name, shareddic):
     app.run()
 
 def compute(threadname, SHARED):
+    import multicom.com as com
     """ Compute the force """
+    ##################################################################################
+
+    ###### Haptic device init
+
+    HAPTICDEV = com.HDevice("ftdi")
+
+    ##################################################################################
 
     def sticky(pos_mur, pos_aig):
         """
@@ -258,6 +297,7 @@ def compute(threadname, SHARED):
             break
 
 if __name__ == '__main__':
+    multiprocessing.freeze_support()
     # Run the app
     MANAGER = multiprocessing.Manager()
     SHARED = MANAGER.dict()
